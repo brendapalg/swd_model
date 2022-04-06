@@ -9,8 +9,8 @@ import numpy as np
 import pandas as pd
 from flask import Flask, request, Response, json
 from sklearn.preprocessing import StandardScaler
-# import plotly
-# import plotly.express as px
+import plotly
+import plotly.express as px
 
 # Load data
 opinion_dict = pd.read_csv('../data/preprocessed/opinion_dict.csv')
@@ -31,10 +31,11 @@ def get_trends():
     scaler = StandardScaler()
     trends_norm = pd.DataFrame(scaler.fit_transform(trends.values))
     trends_norm.columns = trends.columns
-    # trends.set_index(trends.index)
-    trends_norm['date'] = trends.index.values
+    trends_norm.set_index(trends.index, inplace=True)
+    #trends_norm['date'] = trends.index.values
+
     
-    # fig = px.line(trends_norm, x=trends_norm.index, y=['score', 'sentiment'],
-    #           title='Bumble Review trends')
-    return Response(trends_norm.to_json())
+    fig = px.line(trends_norm, x=trends_norm.index, y=['score', 'sentiment'])
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return graphJSON
 
