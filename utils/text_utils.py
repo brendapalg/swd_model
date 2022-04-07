@@ -25,26 +25,6 @@ stopwords_english += ['youll', 'ive']
 # Functions
 # =============================================================================  
 
-def remove_tweetElements(tweet):
-    '''
-
-    Parameters
-    ----------
-    tweet : str
-        Text of a tweet.
-
-    Returns
-    -------
-    tw : str
-        Tweet without mentions, hyperlinks and RTs.
-
-    '''
-    tw = re.sub(r'http\S+', ' ', tweet) #Remove urls
-    tw = re.sub(r'RT @[\w_-]+',' ',tw) #Remove RT text
-    tw = re.sub('@[\w_-]+',' ',tw) #Remove mentions 
-    return tw
-
-
 def clean_text(text, stopwords = stopwords_english, lemmatize=False):
     '''
     Parameters
