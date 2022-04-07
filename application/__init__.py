@@ -23,8 +23,8 @@ from flask import render_template
 # =============================================================================
 # Load Data
 # =============================================================================
-opinion_dict = pd.read_csv('../data/preprocessed/opinion_dict.csv')
-bumble_data = pd.read_csv('../data/preprocessed/bumble_preprocessed.csv')
+opinion_dict = pd.read_csv('./data/preprocessed/opinion_dict.csv')
+bumble_data = pd.read_csv('./data/preprocessed/bumble_preprocessed.csv')
 bumble_data.dropna(inplace=True)
 bumble_data.reset_index(inplace=True, drop=True)
 
@@ -72,17 +72,17 @@ pyLDAvis.save_html(LDAvis_prepared,vis_path)
 
 app = Flask(__name__)
 
-@app.route('/trends', methods = ['GET', 'POST'])
-def get_trends():
-    trends = bumble_data.groupby(by=pd.Grouper(key="at", freq="M")).agg({"sentiment":"mean", "score": "mean", "content": "count"})
-    scaler = StandardScaler()
-    trends_norm = pd.DataFrame(scaler.fit_transform(trends.values))
-    trends_norm.columns = trends.columns
-    trends_norm.set_index(trends.index, inplace=True)
+# @app.route('/trends', methods = ['GET', 'POST'])
+# def get_trends():
+#     trends = bumble_data.groupby(by=pd.Grouper(key="at", freq="M")).agg({"sentiment":"mean", "score": "mean", "content": "count"})
+#     scaler = StandardScaler()
+#     trends_norm = pd.DataFrame(scaler.fit_transform(trends.values))
+#     trends_norm.columns = trends.columns
+#     trends_norm.set_index(trends.index, inplace=True)
     
-    fig = px.line(trends_norm, x=trends_norm.index, y=['score', 'sentiment'])
-    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-    return graphJSON
+#     fig = px.line(trends_norm, x=trends_norm.index, y=['score', 'sentiment'])
+#     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+#     return graphJSON
 
 @app.route('/topics', methods = ['GET', 'POST'])
 def get_topics():
