@@ -35,30 +35,36 @@ bumble_data['at'] = pd.to_datetime(bumble_data['at'])
 # =============================================================================
 # Topic Modeling
 # =============================================================================
-extra_stopwords = ['app']
+# extra_stopwords = ['app']
 
 
-# Create Dictionary
-data_words = list(map(lambda x: [w for w in x.split() if w not in extra_stopwords], bumble_data['clean_content']))
-id2word = corpora.Dictionary(data_words) 
+# # Create Dictionary
+# data_words = list(map(lambda x: [w for w in x.split() if w not in extra_stopwords], bumble_data['clean_content']))
+# id2word = corpora.Dictionary(data_words) 
 
-# Term Document Frequency
-corpus = [id2word.doc2bow(text) for text in data_words]
+# # Term Document Frequency
+# corpus = [id2word.doc2bow(text) for text in data_words]
 
-# Build LDA model
+# # Build LDA model
 num_topics = 5
-lda_model = gensim.models.LdaMulticore(corpus=corpus,
-                                       id2word=id2word,
-                                       num_topics=num_topics)
+# lda_model = gensim.models.LdaMulticore(corpus=corpus,
+#                                        id2word=id2word,
+#                                        num_topics=num_topics)
 
 # Save model
-model_path = "./models/ldaModel_topics-"+str(num_topics)
-with open(model_path, 'wb') as f:
-    pickle.dump(lda_model, f)
+# model_path = "./models/ldaModel_topics-"+str(num_topics)
+# with open(model_path, 'wb') as f:
+#     pickle.dump(lda_model, f)
 
 
 # Prepare visualization
-LDAvis_prepared = pyLDAvis.gensim_models.prepare(lda_model, corpus, id2word)
+# LDAvis_prepared = pyLDAvis.gensim_models.prepare(lda_model, corpus, id2word)
+model_path = "./models/ldaModelvis_topics-"+str(num_topics)
+# with open(model_path, 'wb') as f:
+#     pickle.dump(LDAvis_prepared, f)
+
+with open(model_path, 'rb') as f:
+    LDAvis_prepared = pickle.load(f)
 
 # Save visualization
 vis_path = "./models/ldaVis_topics-"+str(num_topics)+".html"
@@ -72,17 +78,17 @@ pyLDAvis.save_html(LDAvis_prepared,vis_path)
 
 app = Flask(__name__)
 
-# @app.route('/trends', methods = ['GET', 'POST'])
-# def get_trends():
-#     trends = bumble_data.groupby(by=pd.Grouper(key="at", freq="M")).agg({"sentiment":"mean", "score": "mean", "content": "count"})
-#     scaler = StandardScaler()
-#     trends_norm = pd.DataFrame(scaler.fit_transform(trends.values))
-#     trends_norm.columns = trends.columns
-#     trends_norm.set_index(trends.index, inplace=True)
+@app.route('/trends', methods = ['GET', 'POST'])
+def get_trends():
+    trends = bumble_data.groupby(by=pd.Grouper(key="at", freq="M")).agg({"sentiment":"mean", "score": "mean", "content": "count"})
+    scaler = StandardScaler()
+    trends_norm = pd.DataFrame(scaler.fit_transform(trends.values))
+    trends_norm.columns = trends.columns
+    trends_norm.set_index(trends.index, inplace=True)
     
-#     fig = px.line(trends_norm, x=trends_norm.index, y=['score', 'sentiment'])
-#     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
-#     return graphJSON
+    fig = px.line(trends_norm, x=trends_norm.index, y=['score', 'sentiment'])
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    return graphJSON
 
 @app.route('/topics', methods = ['GET', 'POST'])
 def get_topics():
