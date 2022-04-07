@@ -13,7 +13,6 @@ import plotly
 import plotly.express as px
 import gensim.corpora as corpora
 import pyLDAvis.gensim_models
-from gensim.test.utils import datapath
 import gensim
 import pickle 
 import pyLDAvis
@@ -57,18 +56,18 @@ num_topics = 5
 #     pickle.dump(lda_model, f)
 
 
-# Prepare visualization
-# LDAvis_prepared = pyLDAvis.gensim_models.prepare(lda_model, corpus, id2word)
-model_path = "./models/ldaModelvis_topics-"+str(num_topics)
-# with open(model_path, 'wb') as f:
-#     pickle.dump(LDAvis_prepared, f)
+# # Prepare visualization
+# # LDAvis_prepared = pyLDAvis.gensim_models.prepare(lda_model, corpus, id2word)
+# model_path = "./models/ldaModelvis_topics-"+str(num_topics)
+# # with open(model_path, 'wb') as f:
+# #     pickle.dump(LDAvis_prepared, f)
 
-with open(model_path, 'rb') as f:
-    LDAvis_prepared = pickle.load(f)
+# with open(model_path, 'rb') as f:
+#     LDAvis_prepared = pickle.load(f)
 
-# Save visualization
-vis_path = "./models/ldaVis_topics-"+str(num_topics)+".html"
-pyLDAvis.save_html(LDAvis_prepared,vis_path)
+# # Save visualization
+# vis_path = "./models/ldaVis_topics-"+str(num_topics)+".html"
+# pyLDAvis.save_html(LDAvis_prepared,vis_path)
 
 
 
@@ -90,7 +89,7 @@ def get_trends():
     graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
     return graphJSON
 
-@app.route('/topics', methods = ['GET', 'POST'])
-def get_topics():
-    return pyLDAvis.prepared_data_to_html(LDAvis_prepared)
+# @app.route('/topics', methods = ['GET', 'POST'])
+# def get_topics():
+#     return pyLDAvis.prepared_data_to_html(LDAvis_prepared)
 
