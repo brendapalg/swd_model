@@ -42,12 +42,25 @@ pyLDAvis.save_html(LDAvis_prepared,vis_path)
 # Sample by sentiment and date
 # =============================================================================
 
-def sample_reviews(df, date, sentiment, n=3):
+def sample_reviews(df, date, sentiment, topic = None, n=3):
+
+    cond = (True)
+
+    if topic != "":
+        cond = (df['dominant_topic']==int(topic)-1)
+    if date != "":
+        cond =  cond & (df['my']==date)
+
+
     if sentiment == 'pos':
-        sample = df.loc[(df['my']==date) & (df['sentiment']>0), 'content'].sample(n).values
+        sample_df = df.loc[ cond & (df['sentiment']>0), 'content']
     else:
-        sample = df.loc[(df['my']==date) & (df['sentiment']<0), 'content'].sample(n).values
-    return list(sample)
+        sample_df = df.loc[cond & (df['sentiment']<0), 'content']
+    
+    n = min(len(sample_df), n)
+    
+
+    return list(sample_df.sample(n).values)
 
 
 
@@ -69,9 +82,10 @@ def get_trends():
     if request.method == 'POST':
         data = request.get_json(force=True)
         date = data["date"]
+        topic = data["topic"]
         
-        pos = sample_reviews(bumble_data, date, 'pos')
-        neg = sample_reviews(bumble_data, date, 'neg')
+        pos = sample_reviews(bumble_data, date, 'pos', topic)
+        neg = sample_reviews(bumble_data, date, 'neg', topic)
     else:
         pos = ""
         neg = ""
